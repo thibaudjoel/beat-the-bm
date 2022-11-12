@@ -1,5 +1,7 @@
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS model;
+DROP TABLE IF EXISTS model_type;
+DROP TABLE IF EXISTS feature;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -7,11 +9,24 @@ CREATE TABLE user (
   password TEXT NOT NULL
 );
 
-CREATE TABLE post (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  author_id INTEGER NOT NULL,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  title TEXT NOT NULL,
-  body TEXT NOT NULL,
-  FOREIGN KEY (author_id) REFERENCES user (id)
+CREATE TABLE model (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    creator_id INTEGER NOT NULL,
+    feature_id INTEGER NOT NULL,
+    model_type_id INTEGER NOT NULL,
+    title text NOT NULL,
+    FOREIGN KEY (creator_id) REFERENCES user (id),
+    FOREIGN KEY (feature_id) REFERENCES feature (id),
+    FOREIGN KEY (model_type_id) REFERENCES model_type (id)
 );
+
+--Handled by admin only
+CREATE TABLE model_type(
+    id INTEGER PRIMARY KEY,
+    type TEXT UNIQUE
+)
+--Handled by admin
+CREATE TABLE feature(
+    id INTEGER PRIMARY KEY,
+    feature text
+)
