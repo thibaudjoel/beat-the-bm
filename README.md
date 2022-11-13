@@ -10,7 +10,7 @@ The web app will be built using the flask framework in python.
 flask_login: User Session Management (https://flask-login.readthedocs.io/en/latest/)  
 flask_migrate: Database Migration (https://flask-migrate.readthedocs.io/en/latest/)  
 flask_sqlalchemy: Object Relational Mapper (https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/, https://www.sqlalchemy.org/)    
-WTForms: Forms Validation and Rendering (https://wtforms.readthedocs.io/en/3.0.x/).   
+flask_wtf: Forms Validation and Rendering (https://flask-wtf.readthedocs.io/en/1.0.x/, https://wtforms.readthedocs.io/en/3.0.x/)
 
 ## Project directory
 ### App Configuration
