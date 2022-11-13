@@ -1,4 +1,4 @@
-from app import db
+from extensions import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,6 +19,11 @@ class Model(db.Model):
     user_id = db.relationship("User", backpopulates="models")
     modeltype = db.relationship("ModelType", backpopulates="models")
     features = db.relationship("Feature", back_populates="models")
+    
+    # def get_last_matches(amount: int, team):
+    # pass
+
+    # def build_feature_value(feature,matches, team):
     
 class ModelType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
