@@ -2,7 +2,7 @@ from flask import Flask
 import os
 from flaskr.extensions import db, migrate, login
 from flaskr.config import Config
-import flaskr.auth as auth
+import flaskr.blueprints as blueprints
     
 def register_extensions(app: Flask):
     """Register Flask extensions."""
@@ -14,7 +14,7 @@ def register_extensions(app: Flask):
     
 def register_blueprints(app):
     """Register Flask blueprints."""
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(blueprints.bp)
     return None
 
 def create_app(config=None):
