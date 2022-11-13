@@ -1,9 +1,5 @@
-<!doctype html>
-<html>
-    <head>
-        <title>{{ title }} - Beat the Bidmaker</title>
-    </head>
-    <body>
-        <h1>Hello, {{ user.username }}!</h1>
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ user.username }}!</h1>
+{% endblock %}
