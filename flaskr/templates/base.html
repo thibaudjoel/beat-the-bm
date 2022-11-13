@@ -2,7 +2,11 @@
 <div>
   Beat-the-BM
   <a href="/index">Home</a>
-  <a href="/login">Login</a>
+  {% if current_user.is_anonymous %}
+  <a href="{{ url_for('auth.login') }}">Login</a>
+  {% else %}
+  <a href="{{ url_for('auth.logout') }}">Logout</a>
+  {% endif %}
 </div>
 <section class="content">
   <body>

@@ -1,19 +1,20 @@
 from flask import Flask
 import os
-from flaskr.extensions import db, migrate
+from flaskr.extensions import db, migrate, login
 from flaskr.config import Config
 import flaskr.auth as auth
-
+    
 def register_extensions(app: Flask):
     """Register Flask extensions."""
     db.init_app(app) 
     migrate.init_app(app)
+    login.init_app(app)
+    login.login_view = 'login'
     return None
     
 def register_blueprints(app):
     """Register Flask blueprints."""
-    #app.register_blueprint(auth.bp)
-    app.register_blueprint(auth.bp_index)
+    app.register_blueprint(auth.bp)
     return None
 
 def create_app(config=None):
@@ -33,6 +34,9 @@ def create_app(config=None):
         pass
     register_extensions(app)
     register_blueprints(app)
+    @app.before_first_request
+    def create_tables():
+        db.create_all()
     return app
 
 app = create_app()
