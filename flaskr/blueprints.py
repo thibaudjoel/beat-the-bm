@@ -50,3 +50,8 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('auth.login'))
     return render_template('register.html', title='Register', form=form)
+
+@bp.route('/account-settings', methods=['GET', 'POST'])
+def account_settings():
+    user = current_user
+    return render_template('account_settings.html', title='Account Settings', user=user)
