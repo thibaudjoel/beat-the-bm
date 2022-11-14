@@ -44,12 +44,12 @@ class AccountSettingsForm(FlaskForm):
         'Repeat Password', validators=[DataRequired(), EqualTo('new_password')])
     submit_new_password = SubmitField('Apply')
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
+    def validate_username(self, new_username):
+        user = User.query.filter_by(username=new_username.data).first()
         if user is not None:
             raise ValidationError('Please use a different username.')
 
-    def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
+    def validate_email(self, new_email):
+        user = User.query.filter_by(email=new_email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
