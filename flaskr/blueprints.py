@@ -8,7 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 from flaskr.models import User
 
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, AccountSettingsForm
 
 bp = Blueprint('auth', __name__, template_folder='Templates')
 @bp.route('/')
@@ -32,7 +32,7 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         return redirect(url_for('auth.index'))
     return render_template('login.html', title='Sign In', form=form)
@@ -54,4 +54,5 @@ def register():
 @bp.route('/account-settings', methods=['GET', 'POST'])
 def account_settings():
     user = current_user
-    return render_template('account_settings.html', title='Account Settings', user=user)
+    form = AccountSettingsForm()
+    return render_template('account_settings.html', title='Account Settings', user=user, form=form)
