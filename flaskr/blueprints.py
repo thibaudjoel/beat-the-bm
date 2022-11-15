@@ -3,12 +3,11 @@ import functools
 from flask import (Blueprint, flash, g, redirect, render_template, request,
                    session, url_for)
 from flask_login import current_user, login_user, logout_user
-from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
-from flaskr.models import User
-
-from .forms import LoginForm, RegistrationForm
+from flaskr.models import User, Feature
+from flask_login import login_required
+from .forms import LoginForm, RegistrationForm, FeatureForm
 
 bp = Blueprint('auth', __name__, template_folder='Templates')
 @bp.route('/')
@@ -50,3 +49,18 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('auth.login'))
     return render_template('register.html', title='Register', form=form)
+
+@bp.route('/features', methods=['GET', 'POST'])
+@login_required
+def features():
+    form = FeatureForm()
+    if form.validate_on_submit():
+        feature = Feature.query.filter_by(name=form.featurename.data).first()
+        if feature is not None:
+            flash('Feature already exists')
+        else: 
+            feature = Feature(name=form.featurename.data)
+            db.session.add(feature)
+            db.session.commit()
+            flash('Added new feature')
+    return render_template('feature_view_edit.html', title='Features', form=form)

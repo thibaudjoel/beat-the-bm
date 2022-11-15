@@ -1,4 +1,13 @@
 <!doctype html>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 <div>
   Beat-the-BM
   <a href="/index">Home</a>
@@ -7,6 +16,7 @@
   {% else %}
   <a href="{{ url_for('auth.logout') }}">Logout</a>
   {% endif %}
+  <a href="/features">Features</a>
 </div>
 <section class="content">
   <body>
