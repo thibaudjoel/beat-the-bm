@@ -5,9 +5,9 @@ from flask import (Blueprint, flash, g, redirect, render_template, request,
 from flask_login import current_user, login_user, logout_user
 
 from app import db
-from flaskr.models import User, Feature
+from flaskr.models import User, Feature, Model, ModelType
 from flask_login import login_required
-from .forms import LoginForm, RegistrationForm, FeatureForm
+from .forms import LoginForm, RegistrationForm, FeatureForm, ModelForm, ModelTypeForm
 
 bp = Blueprint('auth', __name__, template_folder='Templates')
 @bp.route('/')
@@ -50,7 +50,7 @@ def register():
         return redirect(url_for('auth.login'))
     return render_template('register.html', title='Register', form=form)
 
-@bp.route('/features', methods=['GET', 'POST'])
+@bp.route('/new_feature', methods=['GET', 'POST'])
 @login_required
 def features():
     form = FeatureForm()
@@ -63,4 +63,36 @@ def features():
             db.session.add(feature)
             db.session.commit()
             flash('Added new feature')
-    return render_template('feature_view_edit.html', title='Features', form=form)
+    return render_template('feature_create.html', title='New Feature', form=form)
+
+@bp.route('/new_model', methods=['GET', 'POST'])
+@login_required
+def new_model():
+    form = ModelForm()
+    if form.validate_on_submit():
+        model = Model.query.filter_by(name=form.name.data).first()
+        if model is not None:
+            flash('Name already exists')
+        else:
+            model = Model(user=current_user, modeltype=form.modeltype.data, name=form.name.data,
+                          number_of_last_games=form.number_of_last_games.data, features=form.features.data)
+            db.session.add(model)
+            db.session.commit()
+            flash('Added new model')
+    else:
+        flash('Wrong input')
+    return render_template('model_create.html', title='New Model', form=form)
+
+@bp.route('/new_modeltype', methods=['GET', 'POST'])
+@login_required
+def new_modeltype():
+    form = ModelTypeForm()
+    modeltype = ModelType.query.filter_by(name=form.modeltype.data).first()
+    if modeltype is not None:
+        flash('Modeltype already exists')
+    else: 
+        modeltype = ModelType(name=form.modeltype.data)
+        db.session.add(modeltype)
+        db.session.commit()
+        flash('Added modeltype')
+    return render_template('modeltype_create.html', title='New Modeltype', form=form)
