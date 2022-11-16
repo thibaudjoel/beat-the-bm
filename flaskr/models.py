@@ -40,6 +40,9 @@ class Model(db.Model):
     modeltype = db.relationship("ModelType", back_populates="models")
     features = db.relationship("Feature", secondary=model_features, back_populates="models")
     
+    def __repr__(self) -> str:
+        return f'<Model: {self.name} >'
+    
     # def get_last_matches(amount: int, team):
     # pass
 
@@ -51,6 +54,9 @@ class ModelType(db.Model):
     name = db.Column(db.String, unique=True)
     
     models = db.relationship("Model", back_populates="modeltype")
+    
+    def __repr__(self) -> str:
+        return f'<Modeltype: {self.name} >'
 
 class Feature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,6 +64,9 @@ class Feature(db.Model):
     
     models = db.relationship("Model", secondary=model_features, back_populates="features")
     
+    def __repr__(self) -> str:
+        return f'<Feature: {self.name} >'
+
 # class Match(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     season_id = db.Column(db.Integer, db.ForeignKey("season.id"), nullable=False)

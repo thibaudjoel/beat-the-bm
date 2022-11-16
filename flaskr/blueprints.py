@@ -8,6 +8,7 @@ from app import db
 from flaskr.models import User, Feature, Model, ModelType
 from flask_login import login_required
 from .forms import LoginForm, RegistrationForm, FeatureForm, ModelForm, ModelTypeForm
+from .queries import *
 
 bp = Blueprint('auth', __name__, template_folder='Templates')
 @bp.route('/')
@@ -96,3 +97,27 @@ def new_modeltype():
         db.session.commit()
         flash('Added modeltype')
     return render_template('modeltype_create.html', title='New Modeltype', form=form)
+
+@bp.route('/feature_overview', methods=['GET', 'POST'])
+@login_required
+def features_overview():
+    query = all_features()
+    attr_names = ['name', 'models']
+    attr_lists = [[getattr(obj, attr_name) for attr_name in attr_names] for obj in query]
+    return render_template('overview.html',attr_lists=attr_lists, attributes=attr_names, title='Feature Overview')
+
+@bp.route('/user_overview', methods=['GET', 'POST'])
+@login_required
+def users_overview():
+    query = all_users()
+    attr_names = ['username', 'email', 'password_hash', 'models']
+    attr_lists = [[getattr(obj, attr_name) for attr_name in attr_names] for obj in query]
+    return render_template('overview.html',attr_lists=attr_lists, attributes=attr_names, title='User Overview')
+
+@bp.route('/model_overview', methods=['GET', 'POST'])
+@login_required
+def model_overview():
+    query = all_models()
+    attr_names = ['name','number_of_last_games', 'user', 'modeltype', 'features']
+    attr_lists = [[getattr(obj, attr_name) for attr_name in attr_names] for obj in query]
+    return render_template('overview.html',attr_lists=attr_lists, attributes=attr_names, title='Model Overview')
