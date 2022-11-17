@@ -8,6 +8,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    
+    models = db.relationship("Model", back_populates="user")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -22,29 +24,48 @@ class User(UserMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
-# class Model(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey("user_account.id"))
-#     modeltype_id = db.Column(db.Integer, db.ForeignKey("modeltype.id"), nullable=False)
-#     name = db.Column(db.String, nullable=False)
-#     number_of_last_games = db.Column(db.Integer, nullable=False)
+model_features = db.Table('model_features',
+    db.Column('model_id', db.Integer, db.ForeignKey('model.id'), primary_key=True),
+    db.Column('feature_id', db.Integer, db.ForeignKey('feature.id'), primary_key=True)
+)
+
+class Model(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    modeltype_id = db.Column(db.Integer, db.ForeignKey("modeltype.id"), nullable=False)
+    name = db.Column(db.String, nullable=False)
+    number_of_last_games = db.Column(db.Integer, nullable=False)
     
-#     user_id = db.relationship("User", back_populates="models")
-#     modeltype = db.relationship("ModelType", back_populates="models")
-#     features = db.relationship("Feature", back_populates="models")
+    user = db.relationship("User", back_populates="models")
+    modeltype = db.relationship("ModelType", back_populates="models")
+    features = db.relationship("Feature", secondary=model_features, back_populates="models")
+    
+    def __repr__(self) -> str:
+        return f'<Model: {self.name} >'
     
     # def get_last_matches(amount: int, team):
     # pass
 
     # def build_feature_value(feature,matches, team):
     
-# class ModelType(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String, unique=True)
+class ModelType(db.Model):
+    __tablename__ = 'modeltype'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    
+    models = db.relationship("Model", back_populates="modeltype")
+    
+    def __repr__(self) -> str:
+        return f'<Modeltype: {self.name} >'
 
-# class Features(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String, unique=True)
+class Feature(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    
+    models = db.relationship("Model", secondary=model_features, back_populates="features")
+    
+    def __repr__(self) -> str:
+        return f'<Feature: {self.name} >'
 
 # class Match(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

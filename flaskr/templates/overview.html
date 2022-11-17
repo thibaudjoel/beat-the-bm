@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    <tr>
+    {% for attr_name in attributes %}
+        <th>{{ attr_name }}</th>
+    {% endfor %}
+      </tr>
+    {% for attr_list in attr_lists %}
+        <tr>
+        {% for attr in attr_list %}
+            <td>{{ attr }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
