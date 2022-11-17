@@ -99,7 +99,7 @@ def new_modeltype():
 @bp.route('/feature_overview', methods=['GET', 'POST'])
 @login_required
 def features_overview():
-    query = all_features()
+    query = query_all_features()
     attr_names = ['name', 'models']
     attr_lists = [[getattr(obj, attr_name) for attr_name in attr_names] for obj in query]
     return render_template('overview.html',attr_lists=attr_lists, attributes=attr_names, title='Feature Overview')
@@ -107,7 +107,7 @@ def features_overview():
 @bp.route('/user_overview', methods=['GET', 'POST'])
 @login_required
 def users_overview():
-    query = all_users()
+    query = query_all_users()
     attr_names = ['username', 'email', 'password_hash', 'models']
     attr_lists = [[getattr(obj, attr_name) for attr_name in attr_names] for obj in query]
     return render_template('overview.html',attr_lists=attr_lists, attributes=attr_names, title='User Overview')
@@ -115,7 +115,7 @@ def users_overview():
 @bp.route('/model_overview', methods=['GET', 'POST'])
 @login_required
 def model_overview():
-    query = all_models()
+    query = query_all_models()
     attr_names = ['name','number_of_last_games', 'user', 'modeltype', 'features']
     attr_lists = [[getattr(obj, attr_name) for attr_name in attr_names] for obj in query]
     return render_template('overview.html',attr_lists=attr_lists, attributes=attr_names, title='Model Overview')

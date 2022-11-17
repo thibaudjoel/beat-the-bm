@@ -67,50 +67,71 @@ class Feature(db.Model):
     def __repr__(self) -> str:
         return f'<Feature: {self.name} >'
 
-# class Match(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     season_id = db.Column(db.Integer, db.ForeignKey("season.id"), nullable=False)
-#     match_date = db.Column(db.Date, nullable=False)
-#     match_time = db.Column(db.Time, nullable=False)
-#     home_team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
-#     away_team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
-#     full_time_home_team_goals = db.Column(db.Integer, nullable=False)
-#     full_time_result = db.Column(db.Integer, nullable=False)
-#     B365D = db.Column(db.Float)
-#     B365H = db.Column(db.Float)
-#     B365A = db.Column(db.Float)
-
-#     season = db.relationship("Season", back_populates="matches")
-#     home_team = db.relationship("Team", back_populates="matches")
-#     away_team = db.relationship("Team", back_populates="matches")
-
-# class League(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String, unique=True)
-#     country_id = db.Column(db.Integer, db.ForeignKey("country_id"), nullable=False)
+class Match(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    season_id = db.Column(db.Integer, db.ForeignKey("season.id"), nullable=False)
+    matchday = db.Column(db.Integer, nullable=False)
+    match_date_time = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.Integer)
+    home_team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
+    away_team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
+    #score_id = db.Column(db.Integer, db.ForeignKey("score.id"), nullable=False)
+    season_id = db.Column(db.Integer, db.ForeignKey("season.id"), nullable=False)
     
-#     country = db.relationship("Country", back_populates="leagues")
-#     seasons = db.relationship("Season", back_populates="league")
+    # B365D = db.Column(db.Float)
+    # B365H = db.Column(db.Float)
+    # B365A = db.Column(db.Float)
+    score = db.relationship("Score", back_populates="match")
+    season = db.relationship("Season", back_populates="matches")
+    home_team = db.relationship("Team", backref="matches_home", foreign_keys=[home_team_id])
+    away_team = db.relationship("Team", backref="matches_away", foreign_keys=[away_team_id])
 
-# class Season(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     league_id = db.Column(db.Integer, db.ForeignKey("league_id"), nullable=False)
-#     name = db.Column(db.String, nullable=False)
-#     season_start = db.Column(db.Date, nullable=False)
-#     season_end = db.Column(db.Date, nullable=False)
+class League(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    country_id = db.Column(db.Integer, db.ForeignKey("country.id"), nullable=False)
     
-#     league = db.relationship("league", back_populates="seasons")
-#     matches = db.relationship("Match", back_populates="seasons")
+    country = db.relationship("Country", back_populates="leagues")
+    seasons = db.relationship("Season", back_populates="league")
 
-# # class Team(db.Model):
-# #     id = db.Column(db.Integer, primary_key=True)
-# #     name = db.Column(db.String, unique=True, nullable=False)
-# #     country_id = db.Column(db.Integer, db.ForeignKey("country_id"), nullable=False)
+class Season(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    league_id = db.Column(db.Integer, db.ForeignKey("league_id"), nullable=False)
+    name = db.Column(db.String, nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    current_matchday = db.Column(db.Integer)
+    winner_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
+    league_id = db.Column(db.Integer, db.ForeignKey("league.id"), nullable=False)
+    
+    winner = db.relationship("Team", back_populates="seasons_won", overlaps = "teams,season")
+    league = db.relationship("League", back_populates="seasons")
+    matches = db.relationship("Match", back_populates="season")
+    teams = db.relationship("Team", back_populates="seasons", overlaps = "winner,season")
 
-# #     country = db.relationship("Country", back_populates="teams")
-# #     seasons = db.relationship("Season", back_populates="teams")
-# #     matches = db.relationship("Match", back_populates="home_team", back_populates="away_team")
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    tla = db.Column(db.String)
 
-# class Country(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String, unique=True)
+    seasons = db.relationship("Season", back_populates="teams")
+    # matches_away = db.relationship("Match", backref="away_team")
+    # matches_home =  db.relationship("Match", backref="home_team", foreign_keys=[id])
+    seasons_won = db.relationship("Season", back_populates="winner")
+
+class Country(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    code = db.Column(db.String, unique=True)
+    leagues = db.relationship("League", back_populates="country")
+    
+class Score(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    winner = db.Column(db.String)
+    fulltime_goals_home = db.Column(db.Integer)
+    fulltime_goals_away = db.Column(db.Integer)
+    halftime_goals_home = db.Column(db.Integer)
+    halftime_goals_away = db.Column(db.Integer)
+    
+    match_id = db.Column(db.Integer, db.ForeignKey("match.id"), nullable=False)
+    match = db.relationship("Match", back_populates="score")
