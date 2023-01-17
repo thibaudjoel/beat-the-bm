@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField, IntegerField, IntegerRangeField
 from wtforms.validators import InputRequired, Email, EqualTo, ValidationError, InputRequired
 from wtforms_sqlalchemy.orm import QuerySelectField, QuerySelectMultipleField
-from .queries import all_features, all_modeltypes
+from .queries import query_all_features, query_all_modeltypes, query_all_seasons
 
 from .models import User, Feature
 
@@ -39,8 +39,9 @@ class FeatureForm(FlaskForm):
 class ModelForm(FlaskForm):
     name = StringField('Model name', validators=[InputRequired()])
     number_of_last_games = IntegerField('Number of last games considered for prediction', validators=[InputRequired()])
-    modeltype = QuerySelectField(query_factory=all_modeltypes, get_label='name', validators=[InputRequired()])
-    features = QuerySelectMultipleField(query_factory=all_features, get_label='name', validators=[InputRequired()])
+    modeltype = QuerySelectField(query_factory=query_all_modeltypes, get_label='name', validators=[InputRequired()])
+    features = QuerySelectMultipleField(query_factory=query_all_features, get_label='name', validators=[InputRequired()])
+    seasons = QuerySelectMultipleField(query_factory=query_all_seasons, get_label='start_date', validators=[InputRequired()])
     submit = SubmitField('Save model')
     
 class ModelTypeForm(FlaskForm):

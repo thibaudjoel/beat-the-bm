@@ -6,4 +6,13 @@
 {% else %}
 <h1> Hello {{ user.username }}! </h1>
 {% endif %}
+<form method="post" action="/">
+    <input type="submit" value="API" name="action1"/>
+</form>
+<form method="post" action="/">
+    <input type="submit" value="train" name="action2"/>
+</form>
+<form method="post" action="/">
+    <input type="submit" value="predict" name="action3"/>
+</form>
 {% endblock %}
