@@ -7,12 +7,20 @@ from flaskr.models import User, Feature, Model, ModelType
 from flask_login import login_required
 from ..forms import LoginForm, RegistrationForm, FeatureForm, ModelForm, ModelTypeForm
 from ..queries import *
+from ..api_calls import test_call, test_get_data
 
 bp = Blueprint('auth', __name__, template_folder='../Templates')
-@bp.route('/')
-@bp.route('/index')
+@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/index', methods=('GET', 'POST'))
 def index():
     user = current_user
+    if request.method == 'POST':
+        if request.form.get('action1') == 'API':
+            test_call()
+        if request.form.get('action2') == 'train':
+            test_train()
+        if request.form.get('action3') == 'predict':
+            test_predict()
     return render_template('index.html', title='Home', user=user)
 
 @bp.route('/logout')
@@ -74,7 +82,7 @@ def new_model():
             flash('Name already exists')
         else:
             model = Model(user=current_user, modeltype=form.modeltype.data, name=form.name.data,
-                          number_of_last_games=form.number_of_last_games.data, features=form.features.data)
+                          number_of_last_games=form.number_of_last_games.data, features=form.features.data, seasons=form.seasons.data)
             db.session.add(model)
             db.session.commit()
             flash('Added new model')
@@ -119,3 +127,13 @@ def model_overview():
     attr_names = ['name','number_of_last_games', 'user', 'modeltype', 'features']
     attr_lists = [[getattr(obj, attr_name) for attr_name in attr_names] for obj in query]
     return render_template('overview.html',attr_lists=attr_lists, attributes=attr_names, title='Model Overview')
+
+def test_train():
+    model = query_all_models()[0]
+    model.train()
+def test_predict():
+    match = query_match_on_matchday(15)
+    model = query_all_models()[0]
+    prediction = model.predict(match)
+    flash(prediction)
+    

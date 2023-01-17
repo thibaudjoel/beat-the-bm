@@ -17,6 +17,13 @@ def register_extensions(app: Flask):
     admin.add_view(ModelView(Model, db.session))
     admin.add_view(ModelView(Feature, db.session))
     admin.add_view(ModelView(ModelType, db.session))
+    admin.add_view(ModelView(Match, db.session))
+    admin.add_view(ModelView(Team, db.session))
+    admin.add_view(ModelView(Score, db.session))
+    admin.add_view(ModelView(Country, db.session))
+    admin.add_view(ModelView(Season, db.session))
+    admin.add_view(ModelView(League, db.session))
+    
     return None
     
 def register_blueprints(app):
