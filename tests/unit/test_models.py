@@ -27,9 +27,19 @@ def test_features(model_fulltime_goals, model_halftime_goals, matches_scheduled)
     """
     GIVEN a feature
     WHEN the feature values are retrieved
-    THEN check the correct number of feature values
+    THEN check the twice the number of feature values matches the number of last games and the feature values are retrieved for all matches passed to the feature
     """
-    assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])) == 2
-    assert len(model_fulltime_goals.features[0].retrieve_values(model_halftime_goals, [matches_scheduled[0]])) == 2
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])) == 1
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_halftime_goals, [matches_scheduled[0]])[0]) == 2*model_fulltime_goals.number_of_last_games
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled[:2])) == 2
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled[:3])[0]) == 2*model_fulltime_goals.number_of_last_games
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled)) == 3
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled)[0]) == 2*model_fulltime_goals.number_of_last_games
+    assert len(model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])) == 1
+    assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, [matches_scheduled[0]])[0]) == 2*model_halftime_goals.number_of_last_games
+    assert len(model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled[:2])) == 2
+    assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled[:3])[0]) == 2*model_halftime_goals.number_of_last_games
+    assert len(model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled)) == 3
+    assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled)[0]) == 2*model_halftime_goals.number_of_last_games
     
-def test_
+def test_models(model_fulltime_goals, model_halftime_goals, mo)

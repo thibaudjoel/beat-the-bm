@@ -66,13 +66,13 @@ class Model(db.Model):
     
     #e.g. regression 
     modeltype = db.relationship("ModelType", back_populates="models")
-    features = db.relationship("Feature", secondary=model_features, back_populates="models")
+    match_features = db.relationship("Feature", secondary=model_features, back_populates="models")
     
     def retrieve_feature_values(self, matches=None):
         if not matches:
             matches = list(chain(*[season.matches for season in self.seasons]))
         feature_values = []
-        for feature in self.features:
+        for feature in self.match_features:
             feature_values = feature.retrieve_values(self, matches)
         
         return feature_values
@@ -80,7 +80,7 @@ class Model(db.Model):
     def retrieve_targets(self):
         targets = []
         for match in chain(*[season.matches for season in self.seasons]):
-            #make sure enough matches with features are available and match is played
+            #make sure enough matches with match_features are available and match is played
             if match.matchday > self.number_of_last_games and match.status == 'FINISHED':
                 targets.append(match.score.winner)
         return targets
@@ -125,14 +125,14 @@ class ModelType(db.Model):
 class Feature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
-    models = db.relationship("Model", secondary=model_features, back_populates="features")
+    models = db.relationship("Model", secondary=model_features, back_populates="match_features")
     
     def retrieve_values(self, model, matches):
         #for each team for each game, get <number of last games> past feature values, return feature values and target value for the game
-        features = []
+        feature_values = []
         if self.name == 'fulltime_goals' or self.name == 'halftime_goals':
             for match in matches:
-                #make sure enough matches with features are available and that previous matches are already finished
+                #make sure enough matches with match_features are available and that previous matches are already finished
                 if match.matchday > model.number_of_last_games and match.matchday <= match.season.current_matchday + 1:
                     matchday = match.matchday
                     #get matches before the match according to number of matches to be used for the model
@@ -140,29 +140,30 @@ class Feature(db.Model):
                     away_matches_home_team = filter(lambda match_: match.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.home_team.matches_away)
                     home_matches_away_team = filter(lambda match_: match.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.away_team.matches_home)
                     away_matches_away_team = filter(lambda match_: match.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.away_team.matches_away)
-                    features = [None]*(model.number_of_last_games*2)
-                    #add feature values and target value to the respective lists
+                    match_features = [None]*(model.number_of_last_games*2)
+                    
+                    #get match_features from matches sorted by matchdays, first for the home, then for the away team
                     if self.name == 'fulltime_goals':
                         for match in home_matches_home_team:
-                            features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.fulltime_goals_home
+                            match_features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.fulltime_goals_home
                         for match in away_matches_home_team:
-                            features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.fulltime_goals_away
+                            match_features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.fulltime_goals_away
                         for match in home_matches_away_team:
-                            features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.fulltime_goals_home
+                            match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.fulltime_goals_home
                         for match in away_matches_away_team:
-                            features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.fulltime_goals_away
+                            match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.fulltime_goals_away
                     
                     elif self.name == 'halftime_goals':
                         for match in home_matches_home_team:
-                            features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.halftime_goals_home
+                            match_features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.halftime_goals_home
                         for match in away_matches_home_team:
-                            features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.halftime_goals_away
+                            match_features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.halftime_goals_away
                         for match in home_matches_away_team:
-                            features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.halftime_goals_home
+                            match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.halftime_goals_home
                         for match in away_matches_away_team:
-                            features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.halftime_goals_away
-                            
-        return features
+                            match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.halftime_goals_away
+                feature_values.append(match_features)
+        return feature_values
     
     def __repr__(self) -> str:
         return f'<Feature: {self.name} >'
