@@ -10,17 +10,17 @@ from ..queries import *
 from ..api_calls import test_call, test_get_data
 
 bp = Blueprint('auth', __name__, template_folder='../Templates')
-@bp.route('/', methods=('GET', 'POST'))
-@bp.route('/index', methods=('GET', 'POST'))
+@bp.route('/', methods=['GET'])
+@bp.route('/index', methods=['GET'])
 def index():
     user = current_user
-    if request.method == 'POST':
-        if request.form.get('action1') == 'API':
-            test_call()
-        if request.form.get('action2') == 'train':
-            test_train()
-        if request.form.get('action3') == 'predict':
-            test_predict()
+    # if request.method == 'POST':
+    #     if request.form.get('action1') == 'API':
+    #         test_call()
+    #     if request.form.get('action2') == 'train':
+    #         test_train()
+    #     if request.form.get('action3') == 'predict':
+    #         test_predict()
     return render_template('index.html', title='Home', user=user)
 
 @bp.route('/logout')
@@ -29,7 +29,7 @@ def logout():
     return redirect(url_for('auth.index'))
 
 
-@bp.route('/login', methods=('GET', 'POST'))
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('auth.index'))

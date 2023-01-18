@@ -5,6 +5,10 @@ from flaskr.config import Config
 import flaskr.blueprints.auth as auth
 from flask_admin.contrib.sqla import ModelView
 from flaskr.models import *
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
     
 def register_extensions(app: Flask):
     """Register Flask extensions."""
