@@ -158,6 +158,8 @@ class Match(db.Model):
     match_date_time = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Integer)
     score_id = db.Column(db.Integer, db.ForeignKey("score.id"), nullable=False)
+    away_team_id = db.Column(db.Integer, db.ForeignKey("match.id"), nullable=False)
+    home_team_id = db.Column(db.Integer, db.ForeignKey("match.id"), nullable=False)
 
     score = db.relationship("Score", back_populates="match")
     season = db.relationship("Season", back_populates="matches")
