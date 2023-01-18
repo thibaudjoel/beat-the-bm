@@ -29,13 +29,13 @@ class User(UserMixin, db.Model):
         return '<User {}>'.format(self.username)
 
 model_features = db.Table('model_features',
-    db.Column('model_id', db.Integer, db.ForeignKey('model.id'), primary_key=True),
-    db.Column('feature_id', db.Integer, db.ForeignKey('feature.id'), primary_key=True)
+    db.Column('model_id', db.Integer, db.ForeignKey('model.id')),
+    db.Column('feature_id', db.Integer, db.ForeignKey('feature.id'))
 )
 
 season_teams = db.Table('season_teams',
     db.Column('season_id', db.Integer, db.ForeignKey('season.id'), primary_key=True),
-    db.Column('team_id', db.Integer, db.ForeignKey('team.id'), primary_key=True)
+    db.Column('team_id', db.Integer, db.ForeignKey('team.id'))
 )
 team_matches_home = db.Table('team_matches_home',
     db.Column('team_id', db.Integer, db.ForeignKey('team.id')),
@@ -48,7 +48,7 @@ team_matches_away = db.Table('team_matches_away',
 
 model_seasons = db.Table('model_seasons',
     db.Column('model_id', db.Integer, db.ForeignKey('model.id'), primary_key=True),
-    db.Column('season_id', db.Integer, db.ForeignKey('season.id'), primary_key=True)
+    db.Column('season_id', db.Integer, db.ForeignKey('season.id'))
 )
 
 class Model(db.Model):
@@ -158,13 +158,11 @@ class Match(db.Model):
     match_date_time = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Integer)
     score_id = db.Column(db.Integer, db.ForeignKey("score.id"), nullable=False)
-    away_team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
-    home_team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
 
     score = db.relationship("Score", back_populates="match")
     season = db.relationship("Season", back_populates="matches")
-    away_team = db.relationship("Team", foreign_keys=[away_team_id], back_populates="matches_away")
-    home_team = db.relationship("Team", foreign_keys=[home_team_id], back_populates="matches_home")
+    away_team = db.relationship("Team", secondary=team_matches_away, back_populates="matches_away", uselist=False)
+    home_team = db.relationship("Team", secondary=team_matches_home, back_populates="matches_home", uselist=False)
 
 class League(db.Model):
     id = db.Column(db.Integer, primary_key=True)
