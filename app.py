@@ -5,6 +5,10 @@ from flaskr.config import Config
 import flaskr.blueprints.auth as auth
 from flask_admin.contrib.sqla import ModelView
 from flaskr.models import *
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
     
 def register_extensions(app: Flask):
     """Register Flask extensions."""
@@ -17,6 +21,13 @@ def register_extensions(app: Flask):
     admin.add_view(ModelView(Model, db.session))
     admin.add_view(ModelView(Feature, db.session))
     admin.add_view(ModelView(ModelType, db.session))
+    admin.add_view(ModelView(Match, db.session))
+    admin.add_view(ModelView(Team, db.session))
+    admin.add_view(ModelView(Score, db.session))
+    admin.add_view(ModelView(Country, db.session))
+    admin.add_view(ModelView(Season, db.session))
+    admin.add_view(ModelView(League, db.session))
+    
     return None
     
 def register_blueprints(app):

@@ -28,7 +28,7 @@ Blueprints to route from the url to an action or web page are handled in **`blue
 The match data is retrieved from https://www.football-data.org/.
 
 ## Launch
-Launch is planned for mid december 2022.
+First release is planned for January 2023.
 
 ## Project status
 The project is currently still in the development stage.
