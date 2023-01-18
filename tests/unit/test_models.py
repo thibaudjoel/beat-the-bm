@@ -27,7 +27,9 @@ def test_features(model_fulltime_goals, model_halftime_goals, matches_scheduled)
     """
     GIVEN a feature
     WHEN the feature values are retrieved
-    THEN check they are retrieved correctly
+    THEN check the correct number of feature values
     """
-    assert len(model_fulltime_goals.feature.retrieve_values(model_fulltime_goals, matches_scheduled[0])) == 6
-    #assert len(model_fulltime_goals.feature.retrieve_values(model_halftime_goals, matches_scheduled[0])) == 6
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])) == 2
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_halftime_goals, [matches_scheduled[0]])) == 2
+    
+def test_

@@ -80,6 +80,8 @@ def score_1():
     score = Score()
     score.fulltime_goals_away = 3
     score.fulltime_goals_home = 2
+    score.halftime_goals_away = 0
+    score.halftime_goals_home = 1
     score.winner = 'AWAY_TEAM'
     return score
 
@@ -88,6 +90,8 @@ def score_2():
     score = Score()
     score.fulltime_goals_away = 1
     score.fulltime_goals_home = 1
+    score.halftime_goals_away = 1
+    score.halftime_goals_home = 0
     score.winner = 'DRAW'
     return score
 
@@ -96,6 +100,8 @@ def score_3():
     score = Score()
     score.fulltime_goals_away = 0
     score.fulltime_goals_home = 4
+    score.fulltime_goals_away = 0
+    score.fulltime_goals_home = 3
     score.winner = 'HOME_TEAM'
     return score
 
@@ -122,7 +128,7 @@ def matches_matchday_1(team_1, team_2, team_3, score_1, score_2, score_3):
     match_3.matchday = 1
     match_3.score = score_3
     
-    return match_1, match_2, match_3
+    return [match_1, match_2, match_3]
  
 @pytest.fixture
 def matches_matchday_2(team_1, team_2, team_3, score_1, score_2, score_3):
@@ -147,7 +153,7 @@ def matches_matchday_2(team_1, team_2, team_3, score_1, score_2, score_3):
     match_3.matchday = 2
     match_3.score = score_1
     
-    return match_1, match_2, match_3
+    return [match_1, match_2, match_3]
 
 @pytest.fixture 
 def matches_matchday_3(team_1, team_2, team_3, score_1, score_2, score_3):
@@ -172,7 +178,7 @@ def matches_matchday_3(team_1, team_2, team_3, score_1, score_2, score_3):
     match_3.matchday = 3
     match_3.score = score_2
     
-    return match_1, match_2, match_3
+    return [match_1, match_2, match_3]
 
 @pytest.fixture
 def matches_scheduled(team_1, team_2, team_3):
@@ -194,15 +200,15 @@ def matches_scheduled(team_1, team_2, team_3):
     match_3.status = 'SCHEDULED'
     match_3.matchday = 4
     
-    return match_1, match_2, match_3
+    return [match_1, match_2, match_3]
 
 
 @pytest.fixture
 def new_season(matches_matchday_1, matches_matchday_2, matches_matchday_3, matches_scheduled, team_1, team_2, team_3):
     season = Season()
     season.current_matchday = 4
-    season.matches = matches_matchday_1, matches_matchday_2, matches_matchday_3, matches_scheduled
-    season.teams = team_1, team_2, team_3
+    season.matches = [*matches_matchday_1, *matches_matchday_2, *matches_matchday_3, *matches_scheduled]
+    season.teams = [team_1, team_2, team_3]
     return season
 
 @pytest.fixture
