@@ -1,9 +1,12 @@
 from .extensions import db
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
-from app import login
 from typing import List
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import RidgeClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.base import ClassifierMixin as Classifier
 from itertools import chain
 import numpy as np
 import pickle
@@ -24,10 +27,6 @@ class User(UserMixin, db.Model):
     
     def __repr__(self):
         return '<User {}>'.format(self.username)
-
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
 
 model_features = db.Table('model_features',
     db.Column('model_id', db.Integer, db.ForeignKey('model.id'), primary_key=True),
@@ -89,14 +88,13 @@ class Model(db.Model):
     def train(self):
         targets = self.retrieve_targets()
         feature_values = self.retrieve_feature_values()
-        
-        if self.modeltype.name == 'KNeighborsClassifier':
-            self.classifier = pickle.dumps(KNeighborsClassifier().fit(np.array(feature_values), targets))
+        classifier = self.modeltype.get_classifier()
+        if classifier:
+            self.classifier = pickle.dumps(classifier.fit(np.array(feature_values), targets))
             db.session.commit()
             
-    def predict(self, match):
+    def predict(self, match) -> str | None:
         if self.classifier:
-            a = self.retrieve_feature_values([match])
             return pickle.loads(self.classifier).predict(np.array(self.retrieve_feature_values([match])))
         
     
@@ -110,6 +108,17 @@ class ModelType(db.Model):
     
     models = db.relationship("Model", back_populates="modeltype")
     
+    def get_classifier(self) -> Classifier | None:
+        clf_dic = {
+            'KNeighbors': KNeighborsClassifier(),
+            'DecisionTree': DecisionTreeClassifier(),
+            'MLP': MLPClassifier(),
+            'Ridge': RidgeClassifier(),
+            }
+        classifier = clf_dic.get(self.name)
+        
+        return classifier
+    
     def __repr__(self) -> str:
         return f'<Modeltype: {self.name} >'
 
@@ -121,7 +130,7 @@ class Feature(db.Model):
     def retrieve_values(self, model, matches):
         #for each team for each game, get <number of last games> past feature values, return feature values and target value for the game
         features = []
-        if self.name == 'fulltime_goals':
+        if self.name == 'fulltime_goals' or self.name == 'halftime_goals':
             for match in matches:
                 #make sure enough matches with features are available
                 if match.matchday > model.number_of_last_games and match.status == 'FINISHED':
@@ -131,7 +140,11 @@ class Feature(db.Model):
                     matches_away = sorted(filter(lambda match_: match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.away_team[0].matches_away+match.away_team[0].matches_home), key=lambda x: x.matchday)
                     
                     #add feature values and target value to the respective lists
-                    features.append(list(chain(*[[match.score.fulltime_goals_home for match in matches_home], [match.score.fulltime_goals_away for match in matches_away]])))
+                    if self.name == 'fulltime_goals':
+                        features.append(list(chain(*[[match.score.fulltime_goals_home for match in matches_home], [match.score.fulltime_goals_away for match in matches_away]])))
+                    
+                    elif self.name == 'halftime_goals':
+                        features.append(list(chain(*[[match.score.halftime_goals_home for match in matches_home], [match.score.halftime_goals_away for match in matches_away]])))
 
         return features
     
@@ -145,10 +158,7 @@ class Match(db.Model):
     match_date_time = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Integer)
     score_id = db.Column(db.Integer, db.ForeignKey("score.id"), nullable=False)
-    
-    # B365D = db.Column(db.Float)
-    # B365H = db.Column(db.Float)
-    # B365A = db.Column(db.Float)
+
     score = db.relationship("Score", back_populates="match")
     season = db.relationship("Season", back_populates="matches")
     away_team = db.relationship("Team", secondary=team_matches_away, back_populates="matches_away")
