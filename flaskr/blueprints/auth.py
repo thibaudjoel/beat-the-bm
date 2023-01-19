@@ -1,13 +1,12 @@
 from flask import (Blueprint, flash, g, redirect, render_template, request,
                    session, url_for)
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_required, login_user, logout_user
 
 from app import db
 from flaskr.models import User, Feature, Model, ModelType
-from flask_login import login_required
+from ..api_calls import test_call, test_get_data
 from ..forms import LoginForm, RegistrationForm, FeatureForm, ModelForm, ModelTypeForm
 from ..queries import *
-from ..api_calls import test_call, test_get_data
 
 bp = Blueprint('auth', __name__, template_folder='../Templates')
 @bp.route('/', methods=['GET'])

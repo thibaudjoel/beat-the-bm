@@ -100,8 +100,8 @@ def score_3():
     score = Score()
     score.fulltime_goals_away = 0
     score.fulltime_goals_home = 4
-    score.fulltime_goals_away = 0
-    score.fulltime_goals_home = 3
+    score.halftime_goals_away = 0
+    score.halftime_goals_home = 3
     score.winner = 'HOME_TEAM'
     return score
 
@@ -225,15 +225,6 @@ def model_fulltime_goals(feature_fulltime_goals, modeltype_kneighbors, new_seaso
 def model_halftime_goals(feature_halftime_goals, new_season):
     model = Model()
     model.features = [feature_halftime_goals]
-    model.number_of_last_games = 1
-    model.seasons = [new_season]
-
-    return model
-
-@pytest.fixture
-def model_full_and_half_time_goals(feature_fulltime_goals, feature_halftime_goals, new_season):
-    model = Model()
-    model.features = [feature_fulltime_goals, feature_halftime_goals]
     model.number_of_last_games = 1
     model.seasons = [new_season]
 

@@ -1,10 +1,15 @@
 from flask import Flask
-import os
-from flaskr.extensions import db, migrate, login, admin
-from flaskr.config import Config
-import flaskr.blueprints.auth as auth
 from flask_admin.contrib.sqla import ModelView
+
+import os
+
+import flaskr.blueprints.auth as auth
+from flaskr.config import Config
+from flaskr.extensions import db, migrate, login, admin
 from flaskr.models import *
+
+
+
 
 @login.user_loader
 def load_user(id):

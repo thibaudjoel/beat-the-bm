@@ -50,7 +50,7 @@ def test_features(model_fulltime_goals, model_halftime_goals, matches_scheduled)
     assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled)[0]) == 2*model_halftime_goals.number_of_last_games
     assert not None in model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled)[0]
     
-def test_model_kneighbors(model_fulltime_goals, model_halftime_goals, model_full_and_half_time_goals, matches_scheduled, modeltype_kneighbors):
+def test_model_kneighbors(model_fulltime_goals, model_halftime_goals, matches_scheduled, modeltype_kneighbors):
     """
     GIVEN a model
     WHEN the model has features and modeltype of type kneighbors
@@ -58,33 +58,23 @@ def test_model_kneighbors(model_fulltime_goals, model_halftime_goals, model_full
     """
     model_fulltime_goals.modeltype = modeltype_kneighbors
     model_halftime_goals.modeltype = modeltype_kneighbors
-    model_full_and_half_time_goals.modeltype = modeltype_kneighbors
     model_fulltime_goals.train()
     model_halftime_goals.train()
-    model_full_and_half_time_goals.train()
-    assert len(model_fulltime_goals.retrieve_features()) == len(model_fulltime_goals.features)
-    assert not None in model_fulltime_goals.retrieve_features()
+    assert len(model_fulltime_goals.retrieve_feature_values()[0]) == 2*model_fulltime_goals.number_of_last_games
     assert len(model_fulltime_goals.predict(matches_scheduled)) == len(matches_scheduled)
     assert model_fulltime_goals.classifier 
     assert model_fulltime_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_fulltime_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_fulltime_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     
-    assert len(model_halftime_goals.retrieve_features()) == len(model_halftime_goals.features)
+    assert len(model_halftime_goals.retrieve_feature_values()[0]) == 2*model_halftime_goals.number_of_last_games
     assert len(model_halftime_goals.predict(matches_scheduled)) == len(matches_scheduled)
     assert model_halftime_goals.classifier 
     assert model_halftime_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_halftime_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_halftime_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     
-    assert len(model_full_and_half_time_goals.retrieve_features()) == len(model_full_and_half_time_goals.features)
-    assert len(model_full_and_half_time_goals.predict(matches_scheduled)) == len(matches_scheduled)
-    assert model_full_and_half_time_goals.classifier 
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    
-def test_model_decisiontree(model_fulltime_goals, model_halftime_goals, model_full_and_half_time_goals, matches_scheduled, modeltype_decisiontree):
+def test_model_decisiontree(model_fulltime_goals, model_halftime_goals, matches_scheduled, modeltype_decisiontree):
     """
     GIVEN a model
     WHEN the model has features and modeltype of type decisiontree
@@ -92,32 +82,23 @@ def test_model_decisiontree(model_fulltime_goals, model_halftime_goals, model_fu
     """
     model_fulltime_goals.modeltype = modeltype_decisiontree
     model_halftime_goals.modeltype = modeltype_decisiontree
-    model_full_and_half_time_goals.modeltype = modeltype_decisiontree
     model_fulltime_goals.train()
     model_halftime_goals.train()
-    model_full_and_half_time_goals.train()
-    assert len(model_fulltime_goals.retrieve_features()) == len(model_fulltime_goals.features)
+    assert len(model_fulltime_goals.retrieve_feature_values()[0]) == 2*model_fulltime_goals.number_of_last_games
     assert len(model_fulltime_goals.predict(matches_scheduled)) == len(matches_scheduled)
     assert model_fulltime_goals.classifier 
     assert model_fulltime_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_fulltime_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_fulltime_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     
-    assert len(model_halftime_goals.retrieve_features()) == len(model_halftime_goals.features)
+    assert len(model_halftime_goals.retrieve_feature_values()[0]) == 2*model_halftime_goals.number_of_last_games
     assert len(model_halftime_goals.predict(matches_scheduled)) == len(matches_scheduled)
     assert model_halftime_goals.classifier 
     assert model_halftime_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_halftime_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_halftime_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     
-    assert len(model_full_and_half_time_goals.retrieve_features()) == len(model_full_and_half_time_goals.features)
-    assert len(model_full_and_half_time_goals.predict(matches_scheduled)) == len(matches_scheduled)
-    assert model_full_and_half_time_goals.classifier 
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    
-def test_model_mlp(model_fulltime_goals, model_halftime_goals, model_full_and_half_time_goals, matches_scheduled, modeltype_mlp):
+def test_model_mlp(model_fulltime_goals, model_halftime_goals, matches_scheduled, modeltype_mlp):
     """
     GIVEN a model
     WHEN the model has features and modeltype of type mlp
@@ -125,32 +106,23 @@ def test_model_mlp(model_fulltime_goals, model_halftime_goals, model_full_and_ha
     """
     model_fulltime_goals.modeltype = modeltype_mlp
     model_halftime_goals.modeltype = modeltype_mlp
-    model_full_and_half_time_goals.modeltype = modeltype_mlp
     model_fulltime_goals.train()
     model_halftime_goals.train()
-    model_full_and_half_time_goals.train()
-    assert len(model_fulltime_goals.retrieve_features()) == len(model_fulltime_goals.features)
+    assert len(model_fulltime_goals.retrieve_feature_values()[0]) == 2*model_fulltime_goals.number_of_last_games
     assert len(model_fulltime_goals.predict(matches_scheduled)) == len(matches_scheduled)
     assert model_fulltime_goals.classifier 
     assert model_fulltime_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_fulltime_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_fulltime_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     
-    assert len(model_halftime_goals.retrieve_features()) == len(model_halftime_goals.features)
+    assert len(model_halftime_goals.retrieve_feature_values()[0]) == 2*model_halftime_goals.number_of_last_games
     assert len(model_halftime_goals.predict(matches_scheduled)) == len(matches_scheduled)
     assert model_halftime_goals.classifier 
     assert model_halftime_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_halftime_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_halftime_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     
-    assert len(model_full_and_half_time_goals.retrieve_features()) == len(model_full_and_half_time_goals.features)
-    assert len(model_full_and_half_time_goals.predict(matches_scheduled)) == len(matches_scheduled)
-    assert model_full_and_half_time_goals.classifier 
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    
-def test_model_ridge(model_fulltime_goals, model_halftime_goals, model_full_and_half_time_goals, matches_scheduled, modeltype_ridge):
+def test_model_ridge(model_fulltime_goals, model_halftime_goals, matches_scheduled, modeltype_ridge):
     """
     GIVEN a model
     WHEN the model has features and modeltype of type ridge
@@ -158,28 +130,19 @@ def test_model_ridge(model_fulltime_goals, model_halftime_goals, model_full_and_
     """
     model_fulltime_goals.modeltype = modeltype_ridge
     model_halftime_goals.modeltype = modeltype_ridge
-    model_full_and_half_time_goals.modeltype = modeltype_ridge
     model_fulltime_goals.train()
     model_halftime_goals.train()
-    model_full_and_half_time_goals.train()
-    assert len(model_fulltime_goals.retrieve_features()) == len(model_fulltime_goals.features)
+    assert len(model_fulltime_goals.retrieve_feature_values()[0]) == 2*model_fulltime_goals.number_of_last_games
     assert len(model_fulltime_goals.predict(matches_scheduled)) == len(matches_scheduled)
     assert model_fulltime_goals.classifier 
     assert model_fulltime_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_fulltime_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_fulltime_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     
-    assert len(model_halftime_goals.retrieve_features()) == len(model_halftime_goals.features)
+    assert len(model_halftime_goals.retrieve_feature_values()[0]) == 2*model_halftime_goals.number_of_last_games
     assert len(model_halftime_goals.predict(matches_scheduled)) == len(matches_scheduled)
     assert model_halftime_goals.classifier 
     assert model_halftime_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_halftime_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     assert model_halftime_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    
-    assert len(model_full_and_half_time_goals.retrieve_features()) == len(model_full_and_half_time_goals.features)
-    assert len(model_full_and_half_time_goals.predict(matches_scheduled)) == len(matches_scheduled)
-    assert model_full_and_half_time_goals.classifier 
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[0] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[1] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
-    assert model_full_and_half_time_goals.predict(matches_scheduled)[2] in ['AWAY_TEAM', 'HOME_TEAM', 'DRAW']
     
