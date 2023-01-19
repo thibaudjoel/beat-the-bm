@@ -32,23 +32,23 @@ def test_features(model_fulltime_goals, model_halftime_goals, matches_scheduled)
     and do not contain None
     """
     assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])) == 1
-    assert len(model_fulltime_goals.features[0].retrieve_values(model_halftime_goals, [matches_scheduled[0]])[0]) == 2*model_fulltime_goals.number_of_last_games
-    assert not None in model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])[0]) == 2*model_fulltime_goals.number_of_last_games
+    assert not None in model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])[0]
     assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled[:2])) == 2
-    assert len(model_fulltime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled[:2])[0]) == 2*model_fulltime_goals.number_of_last_games
-    assert not None in model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled[:2])
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled[:2])[0]) == 2*model_fulltime_goals.number_of_last_games
+    assert not None in model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled[:2])[0]
     assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled)) == 3
-    assert len(model_fulltime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled)[0]) == 2*model_fulltime_goals.number_of_last_games
+    assert len(model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled)[0]) == 2*model_fulltime_goals.number_of_last_games
     assert not None in model_fulltime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled)
-    assert len(model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])) == 1
+    assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, [matches_scheduled[0]])) == 1
     assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, [matches_scheduled[0]])[0]) == 2*model_halftime_goals.number_of_last_games
-    assert not None in model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, [matches_scheduled[0]])
-    assert len(model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled[:2])) == 2
+    assert not None in model_halftime_goals.features[0].retrieve_values(model_halftime_goals, [matches_scheduled[0]])[0]
+    assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled[:2])) == 2
     assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled[:2])[0]) == 2*model_halftime_goals.number_of_last_games
-    assert not None in model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled[:2])
-    assert len(model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled)) == 3
+    assert not None in model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled[:2])[0]
+    assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled)) == 3
     assert len(model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled)[0]) == 2*model_halftime_goals.number_of_last_games
-    assert not None in model_halftime_goals.features[0].retrieve_values(model_fulltime_goals, matches_scheduled)
+    assert not None in model_halftime_goals.features[0].retrieve_values(model_halftime_goals, matches_scheduled)[0]
     
 def test_model_kneighbors(model_fulltime_goals, model_halftime_goals, model_full_and_half_time_goals, matches_scheduled, modeltype_kneighbors):
     """

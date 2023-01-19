@@ -151,9 +151,9 @@ class Feature(db.Model):
                         for match in away_matches_home_team:
                             match_features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.fulltime_goals_away
                         for match in home_matches_away_team:
-                            match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.fulltime_goals_home
+                            match_features[2*model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.fulltime_goals_home
                         for match in away_matches_away_team:
-                            match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.fulltime_goals_away
+                            match_features[2*model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.fulltime_goals_away
                     
                     elif self.name == 'halftime_goals':
                         for match in home_matches_home_team:
@@ -161,9 +161,9 @@ class Feature(db.Model):
                         for match in away_matches_home_team:
                             match_features[model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.halftime_goals_away
                         for match in home_matches_away_team:
-                            match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.halftime_goals_home
+                            match_features[2*model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.halftime_goals_home
                         for match in away_matches_away_team:
-                            match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.halftime_goals_away
+                            match_features[2*model.number_of_last_games-1+(matchday-match.matchday-1)] = match.score.halftime_goals_away
                     feature_values.append(match_features)
         return feature_values
     
