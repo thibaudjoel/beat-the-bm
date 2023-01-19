@@ -138,10 +138,10 @@ class Feature(db.Model):
                 if match.matchday > model.number_of_last_games and match.matchday <= match.season.current_matchday + 1:
                     matchday = match.matchday
                     #get matches before the match according to number of matches to be used for the model
-                    home_matches_home_team = filter(lambda match_: match.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.home_team.matches_home)
-                    away_matches_home_team = filter(lambda match_: match.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.home_team.matches_away)
-                    home_matches_away_team = filter(lambda match_: match.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.away_team.matches_home)
-                    away_matches_away_team = filter(lambda match_: match.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.away_team.matches_away)
+                    home_matches_home_team = filter(lambda match_: match_.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.home_team.matches_home)
+                    away_matches_home_team = filter(lambda match_: match_.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.home_team.matches_away)
+                    home_matches_away_team = filter(lambda match_: match_.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.away_team.matches_home)
+                    away_matches_away_team = filter(lambda match_: match_.status == 'FINISHED' and match_.season == match.season and (matchday-model.number_of_last_games) <= match_.matchday < matchday, match.away_team.matches_away)
                     match_features = [None]*(model.number_of_last_games*2)
                     
                     #get match_features from matches sorted by matchdays, first for the home, then for the away team
