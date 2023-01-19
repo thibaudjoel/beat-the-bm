@@ -201,13 +201,14 @@ class Feature(db.Model):
 class Match(db.Model):
     """Class to store information about matches"""
     id = db.Column(db.Integer, primary_key=True)
-    season_id = db.Column(db.Integer, db.ForeignKey("season.id"), nullable=False)
     matchday = db.Column(db.Integer, nullable=False)
     match_date_time = db.Column(db.DateTime, nullable=False)
     
     #SCHEDULED, TIMED, FINISHED
     status = db.Column(db.Integer)
+    
     score_id = db.Column(db.Integer, db.ForeignKey("score.id"), nullable=False)
+    season_id = db.Column(db.Integer, db.ForeignKey("season.id"), nullable=False)
 
     score = db.relationship("Score", back_populates="match")
     season = db.relationship("Season", back_populates="matches")
