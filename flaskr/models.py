@@ -66,13 +66,13 @@ class Model(db.Model):
     
     #e.g. regression 
     modeltype = db.relationship("ModelType", back_populates="models")
-    match_features = db.relationship("Feature", secondary=model_features, back_populates="models")
+    features = db.relationship("Feature", secondary=model_features, back_populates="models")
     
     def retrieve_feature_values(self, matches=None):
         if not matches:
             matches = list(chain(*[season.matches for season in self.seasons]))
         feature_values = []
-        for feature in self.match_features:
+        for feature in self.features:
             feature_values = feature.retrieve_values(self, matches)
         
         return feature_values
@@ -80,14 +80,16 @@ class Model(db.Model):
     def retrieve_targets(self):
         targets = []
         for match in chain(*[season.matches for season in self.seasons]):
-            #make sure enough matches with match_features are available and match is played
+            #make sure enough matches with features are available and match is finished
             if match.matchday > self.number_of_last_games and match.status == 'FINISHED':
                 targets.append(match.score.winner)
         return targets
 
     def train(self):
         targets = self.retrieve_targets()
-        feature_values = self.retrieve_feature_values()
+        feature_values = np.array(self.retrieve_feature_values())
+        if len(self.features) == 1:
+            feature_values = feature_values.reshape(-1,1)
         classifier = self.modeltype.get_classifier()
         if classifier:
             self.classifier = pickle.dumps(classifier.fit(np.array(feature_values), targets))
@@ -125,14 +127,14 @@ class ModelType(db.Model):
 class Feature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
-    models = db.relationship("Model", secondary=model_features, back_populates="match_features")
+    models = db.relationship("Model", secondary=model_features, back_populates="features")
     
     def retrieve_values(self, model, matches):
         #for each team for each game, get <number of last games> past feature values, return feature values and target value for the game
         feature_values = []
         if self.name == 'fulltime_goals' or self.name == 'halftime_goals':
             for match in matches:
-                #make sure enough matches with match_features are available and that previous matches are already finished
+                #make sure enough matches with features are available and that previous matches are already finished
                 if match.matchday > model.number_of_last_games and match.matchday <= match.season.current_matchday + 1:
                     matchday = match.matchday
                     #get matches before the match according to number of matches to be used for the model
@@ -162,7 +164,7 @@ class Feature(db.Model):
                             match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.halftime_goals_home
                         for match in away_matches_away_team:
                             match_features[2*(model.number_of_last_games-1)+(matchday-match.matchday-1)] = match.score.halftime_goals_away
-                feature_values.append(match_features)
+                    feature_values.append(match_features)
         return feature_values
     
     def __repr__(self) -> str:
