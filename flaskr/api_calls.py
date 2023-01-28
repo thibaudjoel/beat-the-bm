@@ -7,6 +7,8 @@ from app import db
 from flaskr.models import *
 from .queries import *
 
+
+os.environ["FD_API_KEY"] = '497529ca191e46a9ade33d8e921449e8'
 def get_matches(date_from, date_to, league_ids) -> None:
     url = "http://api.football-data.org/v4/matches"
     start, end = date_from, date_from + timedelta(days=6)

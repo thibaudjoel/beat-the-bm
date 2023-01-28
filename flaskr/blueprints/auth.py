@@ -9,17 +9,17 @@ from ..forms import LoginForm, RegistrationForm, FeatureForm, ModelForm, ModelTy
 from ..queries import *
 
 bp = Blueprint('auth', __name__, template_folder='../Templates')
-@bp.route('/', methods=['GET'])
-@bp.route('/index', methods=['GET'])
+@bp.route('/', methods=['GET','POST'])
+@bp.route('/index', methods=['GET','POST'])
 def index():
     user = current_user
-    # if request.method == 'POST':
-    #     if request.form.get('action1') == 'API':
-    #         test_call()
-    #     if request.form.get('action2') == 'train':
-    #         test_train()
-    #     if request.form.get('action3') == 'predict':
-    #         test_predict()
+    if request.method == 'POST':
+        if request.form.get('action1') == 'API':
+            test_call()
+        if request.form.get('action2') == 'train':
+            test_train()
+        if request.form.get('action3') == 'predict':
+            test_predict()
     return render_template('index.html', title='Home', user=user)
 
 @bp.route('/logout')

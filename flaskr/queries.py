@@ -1,13 +1,33 @@
 from .models import *
+from .extensions import db
 
 Feature()
 
 from typing import List, Union
+
+def query_all(classname: db.Model) -> List[db.Model]:
+    return classname.query.all()
+
 def query_all_features() -> List[Feature]:
     return Feature.query.all()
 
 def query_all_modeltypes() -> List[ModelType]:
     return ModelType.query.all()
+
+def query_all_matches() -> List[Match]:
+    return Match.query.all()
+
+def query_all_teams() -> List[Team]:
+    return Team.query.all()
+
+def query_all_countries() -> List[Country]:
+    return Country.query.all()
+
+def query_all_leagues() -> List[League]:
+    return League.query.all()
+
+def query_all_scores() -> List[Score]:
+    return Score.query.all()
 
 def query_all_users() -> List[User]:
     return User.query.all()

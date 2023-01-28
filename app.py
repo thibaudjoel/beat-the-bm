@@ -3,13 +3,9 @@ from flask_admin.contrib.sqla import ModelView
 
 import os
 
-import flaskr.blueprints.auth as auth
 from flaskr.config import Config
 from flaskr.extensions import db, migrate, login, admin
 from flaskr.models import *
-
-
-
 
 @login.user_loader
 def load_user(id):
@@ -17,8 +13,8 @@ def load_user(id):
     
 def register_extensions(app: Flask):
     """Register Flask extensions."""
-    db.init_app(app) 
-    migrate.init_app(app)
+    db.init_app(app, ) 
+    migrate.init_app(app, db)
     login.init_app(app)
     login.login_view = 'login'
     admin.init_app(app)
@@ -37,7 +33,9 @@ def register_extensions(app: Flask):
     
 def register_blueprints(app):
     """Register Flask blueprints."""
+    from flaskr.blueprints import admin, auth, main
     app.register_blueprint(auth.bp)
+    app.register_blueprint(main.main)
     return None
 
 def create_app():
