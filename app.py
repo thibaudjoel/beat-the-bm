@@ -53,3 +53,7 @@ def create_app():
     return app
 
 app = create_app()
+
+from flaskr.initialize_objects import create_features,create_modeltypes
+create_features(app)
+create_modeltypes(app)
