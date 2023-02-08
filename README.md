@@ -1,12 +1,11 @@
 # beat-the-bm
 
 ## Introduction
-The project is intended to provide a web application that allows the end user to predict football match outcomes based on individually chosen data and algorithms.
+The project is intended to provide a web application that allows the end user to predict football match outcomes based on individually chosen training data and algorithms with the goal to build a model that makes better predictions than the bookmakers (beat the bm).
 
 ## Technologies
 The backend will be implemented using the flask framework in python.
 The frontend will run on ReactJS
-### Libraries
 
 ## Project directory
 ### App Configuration
