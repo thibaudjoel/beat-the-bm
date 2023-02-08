@@ -4,21 +4,16 @@
 The project is intended to provide a web application that allows the end user to predict football match outcomes based on individually chosen data and algorithms.
 
 ## Technologies
-The web app will be built using the flask framework in python.
+The backend will be implemented using the flask framework in python.
+The frontend will run on ReactJS
 ### Libraries
-
-flask_login: User Session Management (https://flask-login.readthedocs.io/en/latest/)  
-flask_migrate: Database Migration (https://flask-migrate.readthedocs.io/en/latest/)  
-flask_sqlalchemy: Object Relational Mapper (https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/, https://www.sqlalchemy.org/)    
-flask_wtf: Forms Validation and Rendering (https://flask-wtf.readthedocs.io/en/1.0.x/, https://wtforms.readthedocs.io/en/3.0.x/)
 
 ## Project directory
 ### App Configuration
 The app configuration is handled in **`config.py`**
 ### Extensions
 Extensions are managed in **`extensions.py`**
-### Forms
-Forms to handle user input are maintained in **`forms.py`**
+
 ### Models/Classes
 Classes are maintained in **`models.py`**
 ### Blueprints
@@ -28,7 +23,7 @@ Blueprints to route from the url to an action or web page are handled in **`blue
 The match data is retrieved from https://www.football-data.org/.
 
 ## Launch
-First release is planned for January 2023.
+First release is planned for April 2023.
 
 ## Project status
 The project is currently still in the development stage.
