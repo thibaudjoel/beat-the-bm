@@ -1,29 +1,31 @@
+import axios from 'axios'
 import { useState } from 'react'
+import { getSeasons } from '../requests/getSeasons'
+import { getModeltypes } from '../requests/getModeltypes'
+import { getFeatures } from '../requests/getFeatures'
 
 export const ModelForm = () => {
+    const seasonsData = getSeasons()
+    const modeltypesData = getModeltypes()
+    const featuresData = getFeatures()
+
     const [modelname, setModelname] = useState("")
     const [number_games, setNumbergames] = useState(0)
     const [seasons, setSeasons] = useState([])
     const [modeltype, setModeltype] = useState("")
     const [features, setFeatures] = useState([])
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
-        // alert('Form data is ${modelname}')
-        fetch(apiendpoint, {
-            method: 'POST',
-            body: JSON.stringify({
-                name: modelname
-            }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            }
-            .then((response) => response.json())
-            .then((json) => console.log(json))
-        })
-    }
+    // const handleSubmit = (event) => {
+    //     PostModel({name: {event.target.modelname.value},
+    //                 user_id:
+    //             modeltype_id
+    //             number_of_last_games
+    //             seasonss})
+        
 
-    return <form onSubmit={handleSubmit}>
+    // }
+
+    return <form /*onSubmit={handleSubmit}*/>
         <div>
             <label>Model name</label>
             <input
@@ -46,7 +48,15 @@ export const ModelForm = () => {
             value={seasons}
             onChange={(event) => setSeasons(event.target.value)}
             >
-                <option value="feature_d">Feature 1</option>
+            {seasonsData.map((season, season_id) => {
+                return (
+                    <option value={season_id}>
+                        {season.name}
+                    </option>
+                )
+                }
+                )
+            }
             </select>
 
             <label>Modeltype</label>
@@ -56,7 +66,15 @@ export const ModelForm = () => {
             value={modeltype}
             onChange={(event) => setModeltype(event.target.value)}
             >
-                <option value="modeltype_id">Modeltype 1</option>
+                {modeltypesData.map((modeltype, modeltype_id) => {
+                    return (
+                        <option value={modeltype_id}>
+                            {modeltype.name}
+                        </option>
+                    )
+                }
+                )
+            }
             </select>
             <label>Features</label>
             <select
@@ -66,7 +84,15 @@ export const ModelForm = () => {
             value={features}
             onChange={(event) => setFeatures(event.target.value)}
             >
-                <option value="feature_id">Feature 1</option>
+            {featuresData.map((feature, feature_id) => {
+                return (
+                    <option value={feature_id}>
+                        {feature.name}
+                    </option>
+                )
+                }
+                )
+            }
             </select>
         </div>
         <button type='submit'>Submit</button>
