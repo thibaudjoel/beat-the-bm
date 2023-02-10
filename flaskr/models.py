@@ -6,7 +6,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.base import ClassifierMixin as Classifier
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy.ext.declarative import DeclarativeMeta
+from uuid import UUID
 
+import json
 import pickle
 from itertools import chain
 from typing import List
@@ -44,8 +47,45 @@ model_seasons = db.Table(
 
 # Class definitions
 
+#Helper class for dict json representation
+class Output(object):
+    RELATIONSHIPS_TO_DICT = False
 
-class User(UserMixin, db.Model):
+    def __iter__(self):
+        return self.to_dict().iteritems()
+
+    def to_dict(self, rel=None, backref=None):
+        if rel is None:
+            rel = self.RELATIONSHIPS_TO_DICT
+        res = {column.key: getattr(self, attr)
+               for attr, column in self.__mapper__.c.items()}
+        if rel:
+            for attr, relation in self.__mapper__.relationships.items():
+                # Avoid recursive loop between to tables.
+                if backref == relation.table:
+                    continue
+                value = getattr(self, attr)
+                if value is None:
+                    res[relation.key] = None
+                elif isinstance(value.__class__, DeclarativeMeta):
+                    res[relation.key] = value.to_dict(backref=self.__table__)
+                else:
+                    res[relation.key] = [i.to_dict(backref=self.__table__)
+                                         for i in value]
+        return res
+
+    def to_json(self, rel=None):
+        def extended_encoder(x):
+            if isinstance(x, datetime):
+                return x.isoformat()
+            if isinstance(x, UUID):
+                return str(x)
+        if rel is None:
+            rel = self.RELATIONSHIPS_TO_DICT
+        return json.dumps(self.to_dict(rel), default=extended_encoder)
+
+
+class User(UserMixin, Output, db.Model):
     """
     User class representing a user of the app.
     """
@@ -67,7 +107,7 @@ class User(UserMixin, db.Model):
         return "<User {}>".format(self.username)
 
 
-class Model(db.Model):
+class Model(Output, db.Model):
     """
     Model class representing a model which can be created by a user and trained on matches of selected seasons.
     Once it is trained it can be used to predict games.
@@ -145,7 +185,7 @@ class Model(db.Model):
         return f"<Model: {self.name} >"
 
 
-class ModelType(db.Model):
+class ModelType(Output, db.Model):
     """Class representing different classifiers which can be trained by a model"""
 
     __tablename__ = "modeltype"
@@ -170,7 +210,7 @@ class ModelType(db.Model):
         return f"<Modeltype: {self.name} >"
 
 
-class Feature(db.Model):
+class Feature(Output, db.Model):
     """Class representing a feature that can be referenced by a model to be used for training and prediction"""
 
     id = db.Column(db.Integer, primary_key=True)
@@ -285,7 +325,7 @@ class Feature(db.Model):
         return f"<Feature: {self.name} >"
 
 
-class Match(db.Model):
+class Match(Output, db.Model):
     """Class to store information about matches"""
 
     id = db.Column(db.Integer, primary_key=True)
@@ -314,7 +354,7 @@ class Match(db.Model):
     )
 
 
-class League(db.Model):
+class League(Output, db.Model):
     """Class to store information about leagues"""
 
     id = db.Column(db.Integer, primary_key=True)
@@ -326,7 +366,7 @@ class League(db.Model):
     seasons = db.relationship("Season", back_populates="league")
 
 
-class Season(db.Model):
+class Season(Output, db.Model):
     """Class to store information about seasons"""
 
     id = db.Column(db.Integer, primary_key=True)
@@ -344,7 +384,7 @@ class Season(db.Model):
     models = db.relationship("Model", secondary=model_seasons, back_populates="seasons")
 
 
-class Team(db.Model):
+class Team(Output, db.Model):
     """Class representing a football team"""
 
     id = db.Column(db.Integer, primary_key=True)
@@ -363,7 +403,7 @@ class Team(db.Model):
     seasons_won = db.relationship("Season", back_populates="winner")
 
 
-class Country(db.Model):
+class Country(Output, db.Model):
     """Class to store information about countries"""
 
     id = db.Column(db.Integer, primary_key=True)
@@ -372,7 +412,7 @@ class Country(db.Model):
     leagues = db.relationship("League", back_populates="country")
 
 
-class Score(db.Model):
+class Score(Output, db.Model):
     """Class to store results of a match"""
 
     id = db.Column(db.Integer, primary_key=True)
