@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export function getSeasons() {
     let seasons = null
-    axios.get('/features')
+    axios.get('/seasons')
     .then((response) => {
         seasons = response.data.data
         // handle success

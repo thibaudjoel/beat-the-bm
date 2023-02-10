@@ -48,14 +48,17 @@ export const ModelForm = () => {
             value={seasons}
             onChange={(event) => setSeasons(event.target.value)}
             >
-            {seasonsData.map((season, season_id) => {
+            {() => {if (seasonsData) return seasonsData.map((season, season_id) => {
+                if (!season) return null;
                 return (
+                    
                     <option value={season_id}>
                         {season.name}
                     </option>
                 )
                 }
                 )
+            }
             }
             </select>
 
@@ -66,14 +69,15 @@ export const ModelForm = () => {
             value={modeltype}
             onChange={(event) => setModeltype(event.target.value)}
             >
-                {modeltypesData.map((modeltype, modeltype_id) => {
+                {() => {if (modeltypesData) return modeltypesData.map((modeltype, modeltype_id) => {
                     return (
                         <option value={modeltype_id}>
                             {modeltype.name}
                         </option>
                     )
-                }
+                    }
                 )
+            }
             }
             </select>
             <label>Features</label>
@@ -84,7 +88,7 @@ export const ModelForm = () => {
             value={features}
             onChange={(event) => setFeatures(event.target.value)}
             >
-            {featuresData.map((feature, feature_id) => {
+            {() => {if (featuresData) return featuresData.map((feature, feature_id) => {
                 return (
                     <option value={feature_id}>
                         {feature.name}
@@ -93,6 +97,7 @@ export const ModelForm = () => {
                 }
                 )
             }
+        }
             </select>
         </div>
         <button type='submit'>Submit</button>

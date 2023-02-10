@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export function getModeltypes() {
     let modeltypes = null
-    axios.get('/features')
+    axios.get('/modeltypes')
     .then((response) => {
         modeltypes = response.data.data
         // handle success
